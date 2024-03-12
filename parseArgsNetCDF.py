@@ -27,7 +27,10 @@ def parseArgs(args):
             skip+=1
         elif(args[i] == '--time'):
             positionArg = False
-            if(i+1 > len(args)-1 or not args[i+1].isnumeric() or i+2 > len(args)-1 or not args[i+2].isnumeric()):
+            if(i+1 > len(args)-1 or
+                    i+2 > len(args)-1 or
+                    (not type(args[i + 1]) == int and not type(args[i + 2]) == int) and
+                    (not args[i+1].isnumeric() and not args[i+2].isnumeric())):
                 print('->Error: time flag is not followed by two numbers')
                 return -1
             info['time'].append(float(args[i+1]))
@@ -35,7 +38,10 @@ def parseArgs(args):
             skip+=2
         else:
             if positionArg:
-                if(not args[i].isnumeric() or i+1>len(args)-1 or not args[i+1].isnumeric()):
+                if (i+1>len(args)-1 or
+                        (not type(args[i]) == int and not type(args[i+1]) == int) and
+                        (not args[i+1].isnumeric() and not args[i+1].isnumeric())):
+                    print()
                     print('->Error: position flag is not passed pairs of numbers')
                     return -1
                 info['position'].append(float(args[i]))
