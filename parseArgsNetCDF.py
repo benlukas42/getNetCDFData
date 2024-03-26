@@ -1,3 +1,10 @@
+"""
+This program simply parses arguments passed to getNetCDFData.py, ensuring that they're all there and valid.
+
+Author: Ben Lukas
+"""
+
+
 def parseArgs(args):
     info = {
         "filename": args[0],
@@ -5,8 +12,14 @@ def parseArgs(args):
         "mode": "vector",
         "position": [],
         "altitude": 0,
-        "time": []
+        "time": [],
+        "analyze": False
     }
+
+    if info['variable'][0:2] == "--":
+        print("-> Error: missing variable argument")
+        return -1
+
 
     skip = 0
     positionArg = False
@@ -19,6 +32,9 @@ def parseArgs(args):
             positionArg = False
             info['mode'] = args[i+1]
             skip+=1
+        elif(args[i] == '--analyze'):
+            positionArg = False
+            info['analyze'] = True
         elif(args[i] == '--position'):
             positionArg = True
         elif(args[i] == '--altitude'):
@@ -31,25 +47,22 @@ def parseArgs(args):
                     i+2 > len(args)-1 or
                     (not type(args[i + 1]) == int and not type(args[i + 2]) == int) and
                     (not args[i+1].isnumeric() and not args[i+2].isnumeric())):
-                print('->Error: time flag is not followed by two numbers')
+                print('-> Error: time flag is not followed by two numbers')
                 return -1
             info['time'].append(float(args[i+1]))
             info['time'].append(float(args[i+2]))
             skip+=2
         else:
             if positionArg:
-                if (i+1>len(args)-1 or
-                        (not type(args[i]) == int and not type(args[i+1]) == int) and
-                        (not args[i+1].isnumeric() and not args[i+1].isnumeric())):
-                    print()
-                    print('->Error: position flag is not passed pairs of numbers')
+                if i+1>len(args)-1:
+                    print('-> Error: position flag is not passed pairs of numbers')
                     return -1
                 info['position'].append(float(args[i]))
                 info['position'].append(float(args[i+1]))
                 skip+=1
             else:
                 #Unknown argument
-                print('->Error: Invalid argument: ' + str(args[i]))
+                print('-> Error: Invalid argument: ' + str(args[i]))
                 return -1
     if len(info['position']) == 0:
         info['position'].append(0)

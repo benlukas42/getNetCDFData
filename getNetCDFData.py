@@ -1,3 +1,13 @@
+"""
+The program that takes a netCDF file and extracts a data vector from it.
+Optional flags can be used to adjust coordinates.
+Graph mode can be used to plot the resulting data vector(s).
+The useful functions in this program can be found in outputDataNetCDF.py
+
+Author: Ben Lukas
+"""
+
+
 ## Imports for command line argument handling
 import sys
 import parseArgsNetCDF as parser
@@ -28,6 +38,7 @@ def printUsage():
     print('       Optional flags:')
     print('         --help (prints useful information about getNetCDFData.py)')
     print('         --mode <vector or graph>')
+    print('         --analyze (prints statistics about the data vectors)')
     print('         --position <latitude_1> <longitude_1> <latitude_2> <longitude_2>... <latitude_n> <longitude_n>')
     print('         --altitude <altitude>')
     print('         --time <start> <end>')
@@ -42,7 +53,7 @@ def main():
         printUsage()
         return -1
     elif len(args) == 1:
-        if (args[0] == '--help'):
+        if args[0] == '--help':
             printHelp()
             printUsage()
             return -1
@@ -57,17 +68,22 @@ def main():
         printUsage()
         return -1
 
-    if(info['mode'] == 'vector'):
+    data_vector = []
+
+    if info['mode'] == 'vector':
         print("-----------Vector Mode-------------")
-        if(outputDataNetCDF.createVector(info) < 0):
+        data_vector = outputDataNetCDF.createVectors(info, "data_vectors")
+        if len(data_vector) < 1:
             return -1
-    elif(info['mode'] == 'graph'):
+    elif info['mode'] == 'graph':
         print("-----------Graph Mode-------------")
-        if(outputDataNetCDF.createGraph(info) < 0):
+        data_vector = outputDataNetCDF.createGraph(info)
+        if len(data_vector) < 1:
             return -1
 
-    return 0
+    return data_vector
 
 
 if __name__ == '__main__':
-    print('-> Main returned with ' + str(main()))
+    main()
+    #print('-> Main returned with ' + str(main()))
