@@ -81,7 +81,7 @@ def main():
         if len(data_vector) < 1:
             return -1
 
-    return data_vector
+    return 0
 
 
 if __name__ == '__main__':
